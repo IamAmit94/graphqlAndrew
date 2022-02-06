@@ -14,8 +14,9 @@ import { GraphQLServer } from "graphql-yoga";
 // Type Defination (schema)
 const typeDefs = `
 type Query {
-  add(a: Float!, b: Float!): Float!
   greeting(name: String): String!
+  add(numbers:[Float!]!): Float!
+  grades:[Int!]!
     me: User! 
     post: Post!
 }
@@ -38,7 +39,17 @@ type User {
 const resolvers = {
   Query: {
     add(parents, args, ctx, info) {
-      return args.a + args.b;
+      if (args.numbers.length === 0) {
+        return 0;
+      }
+      //[1,5,10,2]
+      else
+        return args.numbers.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue;
+        });
+      // 1st time it run will give accumulator = 1 , currentVal = 5 , return =6
+      // 2nd time accumulator = 6 ,currentVal =10, return = 16
+      // 3rd time accumulator = 16 , currentVal = 2, return = 18
     },
     greeting(parents, args, ctx, info) {
       console.log(args);
@@ -49,6 +60,9 @@ const resolvers = {
       }
       // ctx-> context args-> containts the arguments for all the values provided
       return "Hello !";
+    },
+    grades(parents, args, ctx, info) {
+      return [10, 60, 70, 50, 90];
     },
     me() {
       return {
