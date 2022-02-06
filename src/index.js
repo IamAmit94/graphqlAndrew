@@ -10,9 +10,12 @@ import { GraphQLServer } from "graphql-yoga";
  * 5. Float: used to store double-precison floating point numbers
  */
 
+// Passing the data from client to server
 // Type Defination (schema)
 const typeDefs = `
 type Query {
+  add(a: Float!, b: Float!): Float!
+  greeting(name: String): String!
     me: User! 
     post: Post!
 }
@@ -34,6 +37,19 @@ type User {
 // Resolvers
 const resolvers = {
   Query: {
+    add(parents, args, ctx, info) {
+      return args.a + args.b;
+    },
+    greeting(parents, args, ctx, info) {
+      console.log(args);
+      if (args.name) {
+        return `Hello, ${args.name}`;
+      } else {
+        return "Hello !";
+      }
+      // ctx-> context args-> containts the arguments for all the values provided
+      return "Hello !";
+    },
     me() {
       return {
         id: "123456",
