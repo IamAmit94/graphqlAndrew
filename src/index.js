@@ -12,11 +12,54 @@ import { GraphQLServer } from "graphql-yoga";
 
 // Passing the data from client to server
 // Type Defination (schema)
+
+// Demo USer data
+const users = [
+  {
+    id: "1",
+    name: "Krishna",
+    email: "new@email.com",
+    age: "20",
+  },
+  {
+    id: "2",
+    name: "Keshava",
+    email: "new1@email.com",
+    age: "21",
+  },
+  {
+    id: "3",
+    name: "Radha",
+    email: "new2@email.com",
+    age: "22",
+  },
+];
+
+// Dummy post Data
+const post = [
+  {
+    id: "1",
+    title: "new Title",
+    body: " new data added",
+    published: true,
+  },
+  {
+    id: "2",
+    title: "JavaScript",
+    body: " new data updated",
+    published: true,
+  },
+  {
+    id: "3",
+    title: "graphql",
+    body: "  ",
+    published: false,
+  },
+];
 const typeDefs = `
 type Query {
-  greeting(name: String): String!
-  add(numbers:[Float!]!): Float!
-  grades:[Int!]!
+    posts(query: String): [Post!]!
+    users(query: String): [User!]!
     me: User! 
     post: Post!
 }
@@ -38,31 +81,28 @@ type User {
 // Resolvers
 const resolvers = {
   Query: {
-    add(parents, args, ctx, info) {
-      if (args.numbers.length === 0) {
-        return 0;
+    users(parents, args, ctx, info) {
+      // return users;
+      if (!args.query) {
+        return users;
       }
-      //[1,5,10,2]
-      else
-        return args.numbers.reduce((accumulator, currentValue) => {
-          return accumulator + currentValue;
-        });
-      // 1st time it run will give accumulator = 1 , currentVal = 5 , return =6
-      // 2nd time accumulator = 6 ,currentVal =10, return = 16
-      // 3rd time accumulator = 16 , currentVal = 2, return = 18
+      return users.filter((user) => {
+        return user.name.toLowerCase().includes(args.query.toLowerCase());
+      });
     },
-    greeting(parents, args, ctx, info) {
-      console.log(args);
-      if (args.name) {
-        return `Hello, ${args.name}`;
-      } else {
-        return "Hello !";
+    posts(parents, args, ctx, info) {
+      if (!args.query) {
+        return post;
       }
-      // ctx-> context args-> containts the arguments for all the values provided
-      return "Hello !";
-    },
-    grades(parents, args, ctx, info) {
-      return [10, 60, 70, 50, 90];
+      return posts.filter((post) => {
+        const isTitleMatch = post.title
+          .toLowerCase()
+          .includes(args.query.toLowerCase());
+        const isBodyMatch = post.title
+          .toLowerCase()
+          .includes(args.query.toLowerCase());
+        return isTitleMatch || isBodyMatch;
+      });
     },
     me() {
       return {
