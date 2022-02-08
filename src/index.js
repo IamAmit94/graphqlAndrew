@@ -6,20 +6,15 @@ import User from "./resolvers/User";
 import Post from "./resolvers/Post";
 import Comment from "./resolvers/Comment";
 
-// Type definitions (schema)
-// { db } => is just the object with the set of properties
-// Resolvers
-const resolvers = {
-  Query,
-  Mutation,
-  User,
-  Post,
-  Comment,
-};
-
 const server = new GraphQLServer({
   typeDefs: "./src/schema.graphql",
-  resolvers,
+  resolvers: {
+    Query,
+    Mutation,
+    User,
+    Post,
+    Comment,
+  },
   context: {
     db,
   },
